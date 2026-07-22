@@ -1,0 +1,560 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>AI Data Annotation Platform</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/style.css') }}">
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+</head>
+
+<body>
+
+<!-- ===========================
+        NAVBAR
+============================ -->
+
+<div class="navbar">
+
+    <div class="logo">
+        🤖 AI Data Annotation Platform
+    </div>
+
+   <div class="user">
+
+    <span>
+
+        👤 {{ current_user.name }}
+
+    </span>
+    <small>
+
+        {{ current_user.role }}
+
+    </small>
+
+
+
+</div>
+
+</div>
+
+<!-- ===========================
+        SIDEBAR
+============================ -->
+
+<div class="sidebar">
+
+    <h3>Navigation</h3>
+
+    <a href="{{ url_for('dashboard.dashboard') }}">🏠 Dashboard</a>
+
+    <a href="{{ url_for('dashboard.projects') }}">📁 Projects</a>
+
+    <a href="{{ url_for('dashboard.dashboard') }}#upload">📤 Upload</a>
+
+    <a href="{{ url_for('dashboard.dashboard') }}">🖍 Annotation</a>
+
+    <a href="{{ url_for('review.review_dashboard') }}">📝 Review</a>
+
+    <a href="{{ url_for('reports.reports') }}">📊 Analytics</a>
+
+    <a href="#export-section">📦 Export</a>
+
+    <a href="{{ url_for('auth.logout') }}">🚪 Logout</a>
+
+</div>
+<!-- ===========================
+        MAIN CONTENT
+============================ -->
+
+<div class="main">
+
+    <h1>Dashboard</h1>
+
+    <p class="subtitle">
+
+        Welcome back! Here's an overview of your annotation platform.
+
+    </p>
+
+    <!-- ======================
+            Upload
+    ======================= -->
+
+    <div class="upload-section">
+
+        <h2>Upload</h2>
+        <form action="{{ url_for('dashboard.upload') }}"
+              method="POST"
+              enctype="multipart/form-data">
+
+            <input
+                type="file"
+                name="image"
+                required>
+
+            <button type="submit">
+
+                Upload Image
+
+            </button>
+
+        </form>
+
+    </div>
+
+    <!-- ======================
+          Statistics
+    ======================= -->
+
+    <div class="stats">
+
+        <div class="card">
+
+            <h2>{{ total_images }}</h2>
+
+            <p>📸 Total Images</p>
+
+        </div>
+
+        <div class="card">
+
+            <h2>{{ total_annotations }}</h2>
+
+            <p>🏷 Total Annotations</p>
+
+        </div>
+
+        <div class="card">
+
+            <h2>{{ completed }}</h2>
+
+            <p>✅ Completed</p>
+
+        </div>
+
+        <div class="card">
+
+            <h2>{{ pending }}</h2>
+
+            <p>🟡 Pending</p>
+
+        </div>
+
+    </div>
+
+    <!-- ======================
+        Review Statistics
+====================== -->
+
+<h2 class="section-title">
+
+    📝 Review Statistics
+
+</h2>
+
+<div class="stats">
+
+    <div class="card">
+
+        <h2>{{ pending_reviews }}</h2>
+
+        <p>🟡 Pending Reviews</p>
+
+    </div>
+
+    <div class="card">
+
+        <h2>{{ approved_reviews }}</h2>
+
+        <p>✅ Approved</p>
+
+    </div>
+
+    <div class="card">
+
+        <h2>{{ rejected_reviews }}</h2>
+
+        <p>❌ Rejected</p>
+
+    </div>
+
+    <div class="card">
+
+        <h2>{{ review_completion }}%</h2>
+
+        <p>📈 Review Completion</p>
+
+    </div>
+
+</div>
+        <!-- ======================
+        Analytics
+    ======================= -->
+
+    <h2 class="section-title">
+
+        📊 Dashboard Analytics
+
+    </h2>
+
+    <div class="analytics">
+
+        <div class="chart-card">
+
+            <h3>Project Progress</h3>
+
+            <canvas id="pieChart"></canvas>
+
+        </div>
+
+        <div class="chart-card">
+
+            <h3>Annotations Per Image</h3>
+
+            <canvas id="barChart"></canvas>
+
+        </div>
+
+    </div>
+
+    <!-- ======================
+        Search
+    ======================= -->
+
+    <div class="search-section">
+
+        <input
+            type="text"
+            id="searchInput"
+            placeholder="🔍 Search images by filename...">
+
+    </div>
+
+    <!-- ======================
+        Filter Buttons
+    ======================= -->
+
+    <div class="filter-buttons">
+
+        <button onclick="filterImages('all')">
+
+            📂 All
+
+        </button>
+
+        <button onclick="filterImages('Completed')">
+
+            🟢 Completed
+
+        </button>
+
+        <button onclick="filterImages('Pending')">
+
+            🟡 Pending
+
+        </button>
+
+    </div>
+
+    <!-- ======================
+        Gallery
+    ======================= -->
+
+    <h2 class="section-title">
+
+        Uploaded Images
+
+    </h2>
+
+    <div class="gallery">
+        {% if images %}
+
+    {% for image in images %}
+
+    <div class="box image-card"
+         data-name="{{ image.filename|lower }}"
+         data-status="{{ image.status }}">
+
+        <!-- Image -->
+
+        <div class="image-container">
+            <a href="{{ url_for('annotation.annotate', image_id=image.id) }}">
+
+                <img
+                    src="{{ url_for('static', filename='uploads/' + image.filename) }}"
+                    alt="{{ image.filename }}">
+
+            </a>
+
+        </div>
+
+        <!-- Image Name -->
+
+        <h3>
+
+            {{ image.filename }}
+
+        </h3>
+
+        <!-- Status -->
+
+        {% if image.status == "Completed" %}
+
+            <span class="badge completed">
+
+                🟢 Completed
+
+            </span>
+
+        {% else %}
+
+            <span class="badge pending">
+
+                🟡 Pending
+
+            </span>
+
+        {% endif %}
+
+        <!-- Annotation Count -->
+
+        <p class="meta">
+
+            🏷️
+            {{ image.annotation_count }}
+            Annotation(s)
+
+        </p>
+
+        <!-- Upload Date -->
+
+        <p class="meta">
+
+            📅
+            {{ image.uploaded_time }}
+
+        </p>
+
+        <!-- Buttons -->
+
+        <div class="image-actions">
+
+            <a href="{{ url_for('annotation.annotate', image_id=image.id) }}" class="annotate-btn">
+
+    🖍️ Annotate
+
+</a>
+
+            <a
+                href="{{ url_for('static', filename='uploads/' + image.filename) }}"
+                target="_blank"
+                class="view-btn">
+
+                👁️ View
+
+            </a>
+
+        </div>
+
+    </div>
+
+    {% endfor %}
+
+{% else %}
+
+<div class="empty-state">
+
+    <h2>
+
+        📂 No Images Uploaded
+
+    </h2>
+
+    <p>
+
+        Upload your first image to begin annotation.
+
+    </p>
+
+</div>
+
+{% endif %}
+    </div>
+
+    <!-- ==========================
+            PROJECT PROGRESS
+    =========================== -->
+
+    <div class="progress-section">
+
+        <h2>📈 Annotation Progress</h2>
+
+        {% if total_images > 0 %}
+
+        <div class="progress-bar">
+
+            <div class="progress-fill"
+                 style="width: {{ (completed * 100 / total_images)|round(0) }}%;">
+
+                {{ (completed * 100 / total_images)|round(0) }}%
+
+            </div>
+
+        </div>
+
+        <p>
+
+            {{ completed }} of {{ total_images }} images completed.
+
+        </p>
+
+        {% else %}
+
+        <p>No images uploaded yet.</p>
+
+        {% endif %}
+
+    </div>
+
+    <!-- ==========================
+            QUICK EXPORT
+    =========================== -->
+
+   <h2 id="export-section" class="section-title">
+    📦 Export Dataset
+</h2>
+
+    <div class="export-grid">
+
+        <div class="export-card">
+
+            <h3>YOLO Format</h3>
+
+            <p>Export annotations in YOLO format.</p>
+
+<a href="{{ url_for('export.export_yolo') }}" class="export-btn">
+                Download
+
+            </a>
+
+        </div>
+
+        <div class="export-card">
+
+            <h3>COCO Format</h3>
+
+            <p>Export annotations in COCO JSON.</p>
+
+<a href="{{ url_for('export.export_coco') }}" class="export-btn">
+                Download
+
+            </a>
+
+        </div>
+
+        <div class="export-card">
+
+            <h3>Pascal VOC</h3>
+
+            <p>Export annotations as XML.</p>
+
+<a href="{{ url_for('export.export_voc') }}" class="export-btn">
+                Download
+
+            </a>
+
+        </div>
+
+        <div class="export-card">
+
+            <h3>ZIP Dataset</h3>
+
+            <p>Download the complete dataset.</p>
+
+<a href="{{ url_for('export.download_dataset') }}" class="export-btn">
+                Download ZIP
+
+            </a>
+
+        </div>
+
+    </div>
+
+    <!-- ==========================
+            RECENT ACTIVITY
+    =========================== -->
+
+    <div class="activity-section">
+
+        <h2>
+
+            📝 Recent Activity
+
+        </h2>
+
+        <ul class="activity-list">
+
+            <li>📤 Images uploaded: <strong>{{ total_images }}</strong></li>
+
+            <li>🏷️ Total annotations: <strong>{{ total_annotations }}</strong></li>
+
+            <li>✅ Completed images: <strong>{{ completed }}</strong></li>
+
+            <li>🟡 Pending images: <strong>{{ pending }}</strong></li>
+
+        </ul>
+
+    </div>
+        <!-- ==========================
+            FOOTER
+    =========================== -->
+
+    <footer class="footer">
+
+        <p>
+
+            🤖 AI Data Annotation Platform |
+            Built with Flask • HTML • CSS • JavaScript
+
+        </p>
+
+    </footer>
+
+</div>
+<!-- End Main -->
+
+<!-- ==========================
+    FLASK DATA FOR JAVASCRIPT
+========================== -->
+
+<script>
+
+const completed = {{ completed | default(0) }};
+
+const pending = {{ pending | default(0) }};
+
+const chartLabels = {{ chart_labels | default([]) | tojson }};
+const chartValues = {{ chart_values | default([]) | tojson }};
+
+</script>
+
+<!-- ==========================
+    JAVASCRIPT FILES
+========================== -->
+
+<script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
+
+<script src="{{ url_for('static', filename='js/charts.js') }}"></script>
+
+</body>
+
+</html>

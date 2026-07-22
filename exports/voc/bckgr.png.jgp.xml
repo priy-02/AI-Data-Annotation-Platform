@@ -1,0 +1,1 @@
+<annotation><filename>bckgr.png.jgp.jpg</filename><size><width>600</width><height>1200</height></size><object><name>dog</name><bndbox><xmin>207</xmin><ymin>147</ymin><xmax>504</xmax><ymax>261</ymax></bndbox></object><object><name>cat</name><bndbox><xmin>447</xmin><ymin>375</ymin><xmax>216</xmax><ymax>285</ymax></bndbox></object></annotation>

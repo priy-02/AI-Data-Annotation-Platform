@@ -1,0 +1,50 @@
+{
+    "images": [
+        {
+            "id": 1,
+            "file_name": "bckgr.png.jgp.jpg",
+            "width": 600,
+            "height": 1200
+        }
+    ],
+    "annotations": [
+        {
+            "id": 1,
+            "image_id": 1,
+            "category_id": 1,
+            "bbox": [
+                207.0,
+                147.0,
+                297.0,
+                114.0
+            ],
+            "area": 33858.0,
+            "iscrowd": 0
+        },
+        {
+            "id": 2,
+            "image_id": 1,
+            "category_id": 2,
+            "bbox": [
+                216.0,
+                285.0,
+                231.0,
+                90.0
+            ],
+            "area": 20790.0,
+            "iscrowd": 0
+        }
+    ],
+    "categories": [
+        {
+            "id": 1,
+            "name": "dog",
+            "supercategory": "object"
+        },
+        {
+            "id": 2,
+            "name": "cat",
+            "supercategory": "object"
+        }
+    ]
+}

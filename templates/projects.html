@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Project Management</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+
+
+ <body class="projects-page">
+
+<div class="container">
+
+    <h2>📁 Project Management</h2>
+    <hr>
+
+<h3>📊 Project Statistics</h3>
+
+<div class="stats-container">
+
+    <div class="stat-card">
+        <h4>Total Projects</h4>
+        <p>{{ total_projects }}</p>
+    </div>
+
+    <div class="stat-card">
+        <h4>Completed</h4>
+        <p>{{ completed_projects }}</p>
+    </div>
+
+    <div class="stat-card">
+        <h4>Active</h4>
+        <p>{{ active_projects }}</p>
+    </div>
+
+    <div class="stat-card">
+        <h4>Total Images</h4>
+        <p>{{ total_images }}</p>
+    </div>
+
+    <div class="stat-card">
+        <h4>Annotations</h4>
+        <p>{{ total_annotations }}</p>
+    </div>
+
+</div>
+
+<h3>📈 Overall Progress</h3>
+
+<div class="progress">
+
+    <div class="progress-bar"
+         style="width: {{ completion_percentage }}%;">
+
+        {{ completion_percentage }}%
+
+    </div>
+
+</div>
+
+<hr>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <div class="alert {{ category }}">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+
+    <form method="POST"
+          action="{{ url_for('dashboard.create_project') }}">
+
+        <input
+            type="text"
+            name="name"
+            placeholder="Project Name"
+            required>
+
+        <input
+            type="text"
+            name="description"
+            placeholder="Project Description">
+
+        <button type="submit">
+            ➕ Create Project
+        </button>
+
+    </form>
+
+    <br>
+
+    <table border="1" cellpadding="10" cellspacing="0" width="100%">
+
+        <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Description</th>
+            <th>Status</th>
+            <th>Created</th>
+            <th>Actions</th>
+        </tr>
+
+        {% for project in projects %}
+
+        <tr>
+
+            <td>{{ project.id }}</td>
+
+            <td>{{ project.name }}</td>
+
+            <td>{{ project.description }}</td>
+
+            <td>{{ project.status }}</td>
+
+            <td>{{ project.created_at.strftime("%d-%m-%Y") }}</td>
+
+            <td>
+
+                <a href="{{ url_for('dashboard.change_status', id=project.id) }}">
+                    🔄 Status
+                </a>
+
+                |
+
+                <a href="{{ url_for('dashboard.delete_project', id=project.id) }}"
+                   onclick="return confirm('Delete this project?');">
+                    🗑 Delete
+                </a>
+
+            </td>
+
+        </tr>
+
+        {% else %}
+
+        <tr>
+
+            <td colspan="6" style="text-align:center;">
+                No projects available.
+            </td>
+
+        </tr>
+
+        {% endfor %}
+
+    </table>
+
+    <br>
+
+    <a href="{{ url_for('dashboard.dashboard') }}">
+        ⬅ Back to Dashboard
+    </a>
+
+</div>
+
+</body>
+</html>

@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Review Annotation</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+
+<body>
+
+
+
+<div class="container mt-4">
+
+    <h2 class="mb-4">📝 Review Annotation</h2>
+
+    <!-- Annotation Information -->
+    <div class="card shadow-sm mb-4">
+        <div class="card-header bg-primary text-white">
+            Annotation Details
+        </div>
+
+        <div class="card-body">
+
+            <table class="table table-bordered">
+
+                <tr>
+                    <th width="25%">Annotation ID</th>
+                    <td>{{ annotation.id }}</td>
+                </tr>
+
+                <tr>
+                    <th>Image</th>
+                    <td>{{ annotation.image.filename }}</td>
+                </tr>
+
+                <tr>
+                    <th>Label</th>
+                    <td>{{ annotation.label }}</td>
+                </tr>
+
+                <tr>
+                    <th>Bounding Box</th>
+                    <td>
+                        X: {{ annotation.x }},
+                        Y: {{ annotation.y }},
+                        Width: {{ annotation.width }},
+                        Height: {{ annotation.height }}
+                    </td>
+                </tr>
+
+                <tr>
+                    <th>Confidence</th>
+                    <td>{{ annotation.confidence }}%</td>
+                </tr>
+
+                <tr>
+                    <th>Status</th>
+                    <td>
+
+                        {% if annotation.status == "Approved" %}
+                            <span class="badge bg-success">Approved</span>
+
+                        {% elif annotation.status == "Rejected" %}
+                            <span class="badge bg-danger">Rejected</span>
+
+                        {% else %}
+                            <span class="badge bg-warning text-dark">Pending</span>
+
+                        {% endif %}
+
+                    </td>
+                </tr>
+
+                <tr>
+                    <th>Reviewer</th>
+                    <td>{{ annotation.reviewed_by or "-" }}</td>
+                </tr>
+
+                <tr>
+                    <th>Reviewed At</th>
+
+                    <td>
+
+                        {% if annotation.reviewed_at %}
+                            {{ annotation.reviewed_at.strftime("%d-%m-%Y %H:%M") }}
+                        {% else %}
+                            -
+                        {% endif %}
+
+                    </td>
+
+                </tr>
+
+            </table>
+
+        </div>
+
+    </div>
+
+    <!-- Review Actions -->
+
+    <div class="card shadow-sm mb-4">
+
+        <div class="card-header bg-success text-white">
+            Review Actions
+        </div>
+
+        <div class="card-body">
+
+            <div class="d-flex flex-wrap gap-2">
+
+                <form method="POST"
+                      action="{{ url_for('review.approve_annotation', annotation_id=annotation.id) }}">
+
+                    <button class="btn btn-success">
+                        ✔ Approve
+                    </button>
+
+                </form>
+
+
+                <form method="POST"
+                      action="{{ url_for('review.reject_annotation', annotation_id=annotation.id) }}">
+
+                    <button class="btn btn-danger">
+                        ✖ Reject
+                    </button>
+
+                </form>
+
+
+                <form method="POST"
+                      action="{{ url_for('review.pending_annotation', annotation_id=annotation.id) }}">
+
+                    <button class="btn btn-warning">
+                        ↺ Mark Pending
+                    </button>
+
+                </form>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- Review Comment -->
+
+    <div class="card shadow-sm mb-4">
+
+        <div class="card-header bg-info text-white">
+            Reviewer Comment
+        </div>
+
+        <div class="card-body">
+
+            <form method="POST"
+                  action="{{ url_for('review.save_comment', annotation_id=annotation.id) }}">
+
+                <textarea
+                    name="review_comment"
+                    rows="5"
+                    class="form-control mb-3"
+                    placeholder="Enter review comments...">{{ annotation.review_comment or "" }}</textarea>
+
+                <button class="btn btn-primary">
+
+                    Save Comment
+
+                </button>
+
+            </form>
+
+        </div>
+
+    </div>
+
+
+    <!-- Back -->
+
+    <a href="{{ url_for('review.review_dashboard') }}"
+       class="btn btn-secondary">
+
+        ← Back to Review Dashboard
+
+    </a>
+
+</div>
+
+
+
+</body>
+</html>

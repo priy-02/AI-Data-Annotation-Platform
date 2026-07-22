@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+    <title>Reports & Analytics</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/style.css') }}">
+          <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+</head>
+
+<body>
+
+<div class="container">
+
+    <h2>📊 Reports & Analytics</h2>
+
+    <!-- Statistics Cards -->
+
+    <div class="stats-container">
+
+        <div class="stat-card">
+            <h3>📁 Total Projects</h3>
+            <p>{{ total_projects }}</p>
+        </div>
+
+        <div class="stat-card">
+            <h3>🖼 Total Images</h3>
+            <p>{{ total_images }}</p>
+        </div>
+
+        <div class="stat-card">
+            <h3>🏷 Total Annotations</h3>
+            <p>{{ total_annotations }}</p>
+        </div>
+
+        <div class="stat-card">
+            <h3>✅ Completed Images</h3>
+            <p>{{ completed_images }}</p>
+        </div>
+
+        <div class="stat-card">
+            <h3>⏳ Pending Images</h3>
+            <p>{{ pending_images }}</p>
+        </div>
+
+        <div class="stat-card">
+            <h3>📈 Completion</h3>
+            <p>{{ completion_rate }}%</p>
+        </div>
+
+        <div class="stat-card">
+            <h3>📊 Avg Annotations / Image</h3>
+            <p>{{ avg_annotations }}</p>
+        </div>
+
+        <div class="stat-card">
+            <h3>📂 Avg Images / Project</h3>
+            <p>{{ avg_images }}</p>
+        </div>
+
+    </div>
+
+    <br>
+
+    <!-- Progress -->
+
+    <h3>Overall Completion</h3>
+
+    <div class="progress">
+
+        <div class="progress-bar"
+             style="width:{{ completion_rate }}%;">
+
+            {{ completion_rate }}%
+
+        </div>
+
+    </div>
+
+    <br>
+
+    <!-- Most Annotated Image -->
+
+    <div class="stat-card">
+
+        <h3>🏆 Most Annotated Image</h3>
+
+        {% if most_annotated %}
+
+            <p><strong>{{ most_annotated.filename }}</strong></p>
+
+            <p>{{ max_annotations }} Annotation(s)</p>
+
+        {% else %}
+
+            <p>No annotations available.</p>
+
+        {% endif %}
+
+    </div>
+
+    <br>
+
+    <!-- Analytics Table -->
+
+    <h3>Image Analytics</h3>
+
+    <table class="report-table">
+
+        <thead>
+
+            <tr>
+
+                <th>Image</th>
+                <th>Annotations</th>
+                <th>Status</th>
+                <th>Progress</th>
+
+            </tr>
+
+        </thead>
+
+        <tbody>
+
+        {% for image in images %}
+
+            <tr>
+
+                <td>{{ image.filename }}</td>
+
+                <td>{{ image.annotations|length }}</td>
+
+                <td>
+
+                    {% if image.annotations|length > 0 %}
+
+                        <span class="completed-badge">
+                            ✅ Completed
+                        </span>
+
+                    {% else %}
+
+                        <span class="pending-badge">
+                            ⏳ Pending
+                        </span>
+
+                    {% endif %}
+
+                </td>
+
+                <td>
+
+                    <div class="mini-progress">
+
+                        <div class="mini-progress-fill"
+
+                        style="width:{% if image.annotations|length > 0 %}100{% else %}0{% endif %}%">
+
+                        </div>
+
+                    </div>
+
+                </td>
+
+            </tr>
+
+        {% endfor %}
+
+        </tbody>
+
+    </table>
+
+    <br>
+    <hr>
+
+<h2>📈 Analytics Charts</h2>
+
+<div class="chart-container">
+
+    <canvas id="annotationChart"></canvas>
+
+</div>
+
+<br>
+
+<div class="chart-container">
+
+    <canvas id="completionChart"></canvas>
+
+</div>
+
+<br>
+
+<div class="chart-container">
+
+    <canvas id="projectChart"></canvas>
+
+</div>
+
+    <!-- Export Buttons -->
+
+    <a href="{{ url_for('reports.export_csv') }}"
+   class="btn btn-success">
+
+    📄 Export CSV
+
+</a>
+<div class="report-actions">
+
+    <a href="{{ url_for('reports.export_csv') }}" class="btn btn-success">
+        📄 Export CSV
+    </a>
+
+    <a href="{{ url_for('reports.export_pdf') }}" class="btn btn-danger">
+        📑 Export PDF
+    </a>
+
+</div>
+
+        <button class="btn btn-primary">
+
+            📑 Export PDF
+
+        </button>
+
+    </div>
+
+    <br>
+
+    <a href="{{ url_for('dashboard.dashboard') }}"
+       class="btn">
+
+        ⬅ Back to Dashboard
+
+    </a>
+
+</div>
+<script>
+
+const annotationChart = new Chart(
+document.getElementById("annotationChart"),
+{
+type:'bar',
+
+data:{
+
+labels: {{ image_labels|tojson }},
+
+datasets:[{
+
+label:'Annotations',
+
+data: {{ annotation_counts|tojson }}
+
+}]
+}
+
+});
+
+const completionChart = new Chart(
+document.getElementById("completionChart"),
+{
+type:'pie',
+
+data:{
+
+labels:['Completed','Pending'],
+
+datasets:[{
+
+data:[
+{{ completed_images }},
+{{ pending_images }}
+]
+
+}]
+}
+
+});
+
+const projectChart = new Chart(
+document.getElementById("projectChart"),
+{
+type:'doughnut',
+
+data:{
+
+labels: {{ project_labels|tojson }},
+
+datasets:[{
+
+data: {{ project_counts|tojson }}
+
+}]
+}
+
+});
+
+</script>
+
+</body>
+
+</html>

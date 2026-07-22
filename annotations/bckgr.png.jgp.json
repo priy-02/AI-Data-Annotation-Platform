@@ -1,0 +1,12 @@
+{
+    "image": "bckgr.png.jgp.jpg",
+    "annotations": [
+        {
+            "x": 168,
+            "y": 435,
+            "width": 198,
+            "height": 83,
+            "label": "cat"
+        }
+    ]
+}

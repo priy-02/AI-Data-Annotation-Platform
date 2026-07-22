@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>AI Data Annotation Platform</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/style.css') }}">
+
+</head>
+
+<body>
+
+<!-- ==========================================
+                NAVBAR
+=========================================== -->
+
+<div class="navbar">
+
+    <h2>🤖 AI Data Annotation Platform</h2>
+
+    <a href="{{ url_for('dashboard.dashboard') }}">
+
+        ⬅ Dashboard
+
+    </a>
+
+</div>
+
+<!-- ==========================================
+            MAIN CONTAINER
+=========================================== -->
+
+<div class="container">
+
+    <!-- ======================================
+            IMAGE PANEL
+    ======================================= -->
+
+    <div class="image-box">
+
+        <img
+            id="image"
+            src="{{ url_for('static', filename='uploads/' + image.filename) }}"
+            alt="{{ image.filename }}">
+
+        <canvas id="canvas"></canvas>
+
+    </div>
+
+    <!-- ======================================
+            RIGHT PANEL
+    ======================================= -->
+
+    <div class="tools">
+
+        <h2>📝 Annotation Tools</h2>
+
+        <hr>
+
+        <h3>📊 Project Information</h3>
+
+        <p>
+
+            <b>Project:</b>
+
+            AI Data Annotation Platform
+
+        </p>
+
+        <p>
+
+            <b>User:</b>
+
+            {{ current_user.name }}
+
+        </p>
+
+        <p>
+
+            <b>Image:</b>
+
+            {{ image.filename }}
+
+        </p>
+
+        <p>
+
+            <b>Total Objects:</b>
+
+            <span id="objectCount">0</span>
+
+        </p>
+
+        <hr>
+
+        <label>
+
+            <b>Object Label</b>
+
+        </label>
+
+        <input
+            type="text"
+            id="label"
+            placeholder="Example: Person">
+
+        <br><br>
+
+        <label>
+
+            <b>Confidence Score</b>
+
+        </label>
+
+        <input
+            type="range"
+            id="confidence"
+            min="0"
+            max="100"
+            value="100">
+
+        <p>
+
+            Confidence :
+
+            <span id="confidenceValue">
+
+                100%
+
+            </span>
+
+        </p>
+
+        <button id="saveBtn">
+
+            💾 Save Annotation
+
+        </button>
+
+        <br><br>
+
+        <button id="clearBtn">
+
+            🗑 Clear Current Box
+
+        </button>
+
+        <br><br>
+
+        <button id="deleteBtn">
+
+            ❌ Delete Selected
+
+        </button>
+
+        <br><br>
+
+        <button id="editBtn">
+
+            ✏ Edit Label
+
+        </button>
+
+        <hr>
+
+        <button id="reviewBtn">
+
+            👁 Review Mode
+
+        </button>
+
+        <br><br>
+
+        <button id="historyBtn">
+
+            📜 Annotation History
+
+        </button>
+
+        <hr>
+
+        <h3>Saved Annotations</h3>
+
+        <div id="annotationList">
+
+            <p>No annotations available.</p>
+
+        </div>
+                <hr>
+
+        <h3>🗺 Mini Map</h3>
+
+        <canvas
+            id="miniMap"
+            width="200"
+            height="120"
+            style="border:1px solid #aaa;">
+        </canvas>
+
+        <br><br>
+
+        <button id="fullscreenBtn">
+
+            ⛶ Full Screen
+
+        </button>
+
+        <br><br>
+
+        <button id="themeBtn">
+
+            🌙 Dark Mode
+
+        </button>
+
+        <hr>
+
+        <h3>📦 Export Options</h3>
+
+        <button id="downloadBtn">
+
+            📥 Download JSON
+
+        </button>
+
+        <br><br>
+
+        <button id="yoloBtn">
+
+            📦 Export YOLO
+
+        </button>
+
+        <br><br>
+
+        <button id="cocoBtn">
+
+            📦 Export COCO
+
+        </button>
+
+        <br><br>
+
+        <button id="vocBtn">
+
+            📦 Export Pascal VOC
+
+        </button>
+
+        <br><br>
+
+        <button id="zipBtn">
+
+            📥 Download Dataset
+
+        </button>
+
+        <hr>
+
+        <h3>📜 Annotation History</h3>
+
+        <div id="historyPanel">
+
+            <p>No history available.</p>
+
+        </div>
+
+        <hr>
+
+        <h3>Status</h3>
+
+        <p id="statusText">
+
+            Waiting...
+
+        </p>
+
+        <hr>
+
+        <h3>🕒 Current Time</h3>
+
+        <p id="clock"></p>
+
+    </div>
+
+</div>
+<!-- ==========================================
+            JAVASCRIPT
+========================================== -->
+
+<script>
+
+    // ----------------------------------
+    // Current Image Information
+    // ----------------------------------
+
+    const IMAGE_NAME = "{{ image.filename }}";
+
+    const IMAGE_ID = {{ image.id }};
+
+    // ----------------------------------
+    // Initialize Page
+    // ----------------------------------
+
+    document.addEventListener("DOMContentLoaded", function () {
+
+        // Confidence Slider
+
+        const confidenceSlider =
+            document.getElementById("confidence");
+
+        const confidenceValue =
+            document.getElementById("confidenceValue");
+
+        confidenceSlider.addEventListener("input", function () {
+
+            confidenceValue.innerHTML =
+                this.value + "%";
+
+        });
+
+        // Full Screen
+
+        document
+            .getElementById("fullscreenBtn")
+            .addEventListener("click", function () {
+
+                if (document.documentElement.requestFullscreen) {
+
+                    document.documentElement.requestFullscreen();
+
+                }
+
+            });
+
+        // Dark Mode
+
+        document
+            .getElementById("themeBtn")
+            .addEventListener("click", function () {
+
+                document.body.classList.toggle("dark");
+
+            });
+
+    });
+
+    // ----------------------------------
+    // Live Clock
+    // ----------------------------------
+
+    setInterval(function () {
+
+        document.getElementById("clock").innerHTML =
+            new Date().toLocaleTimeString();
+
+    }, 1000);
+
+</script>
+
+<!-- ==========================================
+        Annotation JavaScript
+========================================== -->
+
+<script src="{{ url_for('static', filename='js/annotation.js') }}"></script>
+
+</body>
+
+</html>

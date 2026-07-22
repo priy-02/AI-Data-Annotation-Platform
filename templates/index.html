@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Enterprise AI Data Annotation Platform</title>
+
+    <!-- Google Font -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+
+    <link rel="stylesheet"
+        href="{{ url_for('static', filename='css/style.css') }}">
+
+</head>
+
+<body>
+
+    <!-- ================= NAVBAR ================= -->
+
+    <nav class="navbar">
+
+        <div class="logo">
+
+            🤖 AI Annotation Platform
+
+        </div>
+
+        <div class="nav-links">
+
+            <a href="#">Home</a>
+            <a href="#features">Features</a>
+            <a href="#about">About</a>
+
+            <a href="{{ url_for('auth.login') }}" class="login-btn">
+                Login
+            </a>
+
+        </div>
+
+    </nav>
+
+    <!-- ================= HERO ================= -->
+
+    <section class="hero">
+
+        <div class="overlay"></div>
+
+        <div class="hero-content">
+
+            <h1>
+
+                Enterprise AI Data Annotation Platform
+
+            </h1>
+
+            <p>
+
+                Build production-ready datasets for Machine Learning and Computer Vision with enterprise-grade annotation, quality review, analytics and dataset export.
+
+            </p>
+
+            <div class="hero-buttons">
+
+                <a href="{{ url_for('auth.register') }}" class="btn-primary">
+
+                    Get Started
+
+                </a>
+
+                <a href="{{ url_for('auth.login') }}" class="btn-secondary">
+
+                    Login
+
+                </a>
+
+            </div>
+
+        </div>
+
+    </section>
+
+    <!-- ================= FEATURES ================= -->
+
+    <section class="features" id="features">
+
+        <h2>Powerful Features</h2>
+
+        <div class="feature-grid">
+
+            <div class="feature-card">
+
+                🖼
+
+                <h3>Image Upload</h3>
+
+                <p>Upload images securely for annotation.</p>
+
+            </div>
+
+            <div class="feature-card">
+
+                ✏
+
+                <h3>Bounding Box Annotation</h3>
+
+                <p>Create accurate annotations for AI datasets.</p>
+
+            </div>
+
+            <div class="feature-card">
+
+                👥
+
+                <h3>Review Workflow</h3>
+
+                <p>Approve, reject and manage annotation quality.</p>
+
+            </div>
+
+            <div class="feature-card">
+
+                📊
+
+                <h3>Analytics</h3>
+
+                <p>Monitor annotation progress with dashboards.</p>
+
+            </div>
+
+            <div class="feature-card">
+
+                📦
+
+                <h3>Dataset Export</h3>
+
+                <p>Export to YOLO, COCO and Pascal VOC.</p>
+
+            </div>
+
+            <div class="feature-card">
+
+                ☁
+
+                <h3>Cloud Ready</h3>
+
+                <p>Deploy easily on cloud platforms.</p>
+
+            </div>
+
+        </div>
+
+    </section>
+
+    <!-- ================= STATS ================= -->
+
+    <section class="stats">
+
+        <div class="stat">
+
+            <h2>5000+</h2>
+
+            <p>Images</p>
+
+        </div>
+
+        <div class="stat">
+
+            <h2>25000+</h2>
+
+            <p>Annotations</p>
+
+        </div>
+
+        <div class="stat">
+
+            <h2>99%</h2>
+
+            <p>Quality</p>
+
+        </div>
+
+        <div class="stat">
+
+            <h2>100%</h2>
+
+            <p>Cloud Ready</p>
+
+        </div>
+
+    </section>
+
+    <!-- ================= ABOUT ================= -->
+
+    <section class="about" id="about">
+
+        <h2>Why Choose Our Platform?</h2>
+
+        <p>
+
+            Our AI Data Annotation Platform simplifies the creation of high-quality datasets for Computer Vision projects through intelligent workflows, collaborative review, analytics, and multi-format exports.
+
+        </p>
+
+    </section>
+
+    <!-- ================= FOOTER ================= -->
+
+    <footer>
+
+        © 2026 Enterprise AI Data Annotation Platform | Flask • Python • JavaScript • SQLite
+
+    </footer>
+
+</body>
+
+</html>
